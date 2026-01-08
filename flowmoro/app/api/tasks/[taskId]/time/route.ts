@@ -2,8 +2,8 @@
 import { NextRequest } from "next/server";
 import { query, execute } from "@/lib/db";
 import { ok, fail, withErrorHandling } from "@/lib/api-utils";
+import { requireUserId } from "@/lib/auth-guard";
 
-const TEMP_USER_ID = 1;
 
 type TaskRow = {
   id: number;
@@ -18,9 +18,10 @@ const addTaskTime = async (
   req: NextRequest,
   { params }: RouteParams,
 ): Promise<Response> => {
+  const userId = await requireUserId();
   const { taskId } = await params; 
   const id = Number(taskId);
-
+  
   if (!taskId || Number.isNaN(id)) {
     return fail(
       "VALIDATION_ERROR",
@@ -50,7 +51,7 @@ const addTaskTime = async (
     FROM Task
     WHERE id = ? AND userId = ?
     `,
-    [id, TEMP_USER_ID],
+    [id, userId],
   );
 
   if (!task) {
@@ -75,7 +76,7 @@ const addTaskTime = async (
     SET totalTrackedMinutes = totalTrackedMinutes + ?
     WHERE id = ? AND userId = ?
     `,
-    [durationMinutes, id, TEMP_USER_ID],
+    [durationMinutes, id, userId],
   );
 
   return ok(

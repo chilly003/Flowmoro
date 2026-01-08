@@ -2,8 +2,7 @@
 import { NextRequest } from "next/server";
 import { query, execute } from "@/lib/db";
 import { ok, fail, withErrorHandling } from "@/lib/api-utils";
-
-const TEMP_USER_ID = 1; // User 테이블에 INSERT한 test user의 id
+import { requireUserId } from "@/lib/auth-guard";
 
 type TaskStatus = "YET" | "DONE";
 type TaskRow = {
@@ -21,6 +20,7 @@ type TaskRow = {
 const getTasks = async (req: NextRequest): Promise<Response> => {
   const { searchParams } = new URL(req.url);
   const dateParam = searchParams.get("date");
+  const userId = await requireUserId();
 
   if (!dateParam) {
     return fail(
@@ -37,7 +37,7 @@ const getTasks = async (req: NextRequest): Promise<Response> => {
     WHERE userId = ? AND DATE(date) = ?
     ORDER BY \`order\` ASC
     `,
-    [TEMP_USER_ID, dateParam]
+    [userId, dateParam]
   )
 
   return ok(
@@ -52,29 +52,43 @@ const getTasks = async (req: NextRequest): Promise<Response> => {
 //POST
 const createTask = async (req: NextRequest): Promise<Response> => {
   const body = await req.json();
-  const { title, date, order } = body as {
+  const userId = await requireUserId();
+  const { title, date } = body as {
     title?: string,
     date?: string,
-    order?: number,
   }
 
-  if (!title || !date || typeof order !== "number") {
+  if (!title || !date) {
     return fail(
       "VALIDATION_ERROR",
-      "title, date(YYYY-MM-DD), order는 필수 값입니다.",
+      "title, date(YYYY-MM-DD)는 필수 값입니다.",
       400,
     );
   }
 
   const dateTime = `${date} 00:00:00`;
 
+  // 1) 해당 날짜의 가장 큰 order 조회
+  const [row] = await query<{ maxOrder: number | null }>(
+    `
+    SELECT MAX(\`order\`) AS maxOrder
+    FROM Task
+    WHERE userId = ? AND DATE(date) = ?
+    `,
+    [userId, date],
+  );
+
+  const nextOrder = (row?.maxOrder ?? 0) + 1;
+
+  // 2) 자동 계산된 order로 INSERT
   const result: any = await execute(
     `
     INSERT INTO Task (userId, title, date, status, \`order\`, totalTrackedMinutes)
     VALUES (?, ?, ?, 'YET', ?, 0)
     `,
-    [TEMP_USER_ID, title, dateTime, order],
+    [userId, title, dateTime, nextOrder],
   );
+
 
   const insertedId = result.insertId as number;
 
@@ -87,7 +101,7 @@ const createTask = async (req: NextRequest): Promise<Response> => {
     [insertedId],
   );
 
-  if (!created){
+  if (!created) {
     return fail(
       "INTERNAL_SERVER_ERROR",
       "생성된 작업을 조회하지 못했습니다.",

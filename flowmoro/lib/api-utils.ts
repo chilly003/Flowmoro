@@ -5,8 +5,10 @@ export type ApiErrorCode =
   | "VALIDATION_ERROR"
   | "INVALID_DATE"
   | "TASK_NOT_FOUND"
+  | "UNAUTHENTICATED"
+  | "FORBIDDEN"
   | "INTERNAL_SERVER_ERROR"
-  | (string & {}); 
+  | (string & {});
 
 export interface ApiSuccessResponse<T> {
   success: true;
@@ -43,7 +45,6 @@ export function fail(
   return NextResponse.json(body, { status });
 }
 
-// 모든 Route Handler에 공통으로 씌우는 에러 래퍼
 export type AppRouteHandler = (
   req: NextRequest,
   context?: any,

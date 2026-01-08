@@ -2,8 +2,7 @@
 import { NextRequest } from "next/server";
 import { query, execute } from "@/lib/db";
 import { ok, fail, withErrorHandling } from "@/lib/api-utils";
-
-const TEMP_USER_ID = 1;
+import { requireUserId } from "@/lib/auth-guard";
 
 type TaskStatus = "YET" | "DONE";
 
@@ -27,10 +26,9 @@ const deleteTask = async (
   _req: NextRequest,
   { params }: RouteParams,
 ): Promise<Response> => {
+  const userId = await requireUserId();
   const { taskId } = await params;  
   const id = Number(taskId);
-
-  console.log("deleteTask taskId =", taskId, "id =", id);
 
   if (!taskId || Number.isNaN(id)) {
     return fail(
@@ -45,7 +43,7 @@ const deleteTask = async (
     DELETE FROM Task
     WHERE id = ? AND userId = ?
     `,
-    [id, TEMP_USER_ID],
+    [id, userId],
   );
 
   if (result.affectedRows === 0) {
@@ -66,8 +64,7 @@ const updateTaskStatus = async (
 ): Promise<Response> => {
   const { taskId } = await params;  
   const id = Number(taskId);
-
-  console.log("updateTaskStatus taskId =", taskId, "id =", id);
+  const userId = await requireUserId();
 
   if (!taskId || Number.isNaN(id)) {
     return fail(
@@ -94,7 +91,7 @@ const updateTaskStatus = async (
     SET status = ?
     WHERE id = ? AND userId = ?
     `,
-    [status, id, TEMP_USER_ID],
+    [status, id, userId],
   );
 
   if (result.affectedRows === 0) {
