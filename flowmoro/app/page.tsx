@@ -1,5 +1,4 @@
-import Main from "@/app/app/main/page";
-import Flowmoro from "./app/flowmoro/page";
+import Flowmoro from "./flowmoro/page";
 
 export default function Page() {
 

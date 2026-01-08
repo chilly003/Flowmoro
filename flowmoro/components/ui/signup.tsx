@@ -3,7 +3,7 @@
 import { useForm } from "react-hook-form";
 import { useAuthMutations } from "@/hooks/useAuthMutations";
 
-type SignupProps = {
+type SignupProps = { 
   onSwitchToLogin: () => void;
 };
 

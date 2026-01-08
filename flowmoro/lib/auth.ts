@@ -3,7 +3,7 @@ import Credentials from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import { query } from "@/lib/db";
 
-type DbUser = { id: string; email: string; passwordHash: string | null };
+type DbUser = { id: number; email: string; passwordHash: string | null };
 
 export const { handlers, auth } = NextAuth({
   session: { strategy: "jwt" },
@@ -29,7 +29,7 @@ export const { handlers, auth } = NextAuth({
         const ok = await bcrypt.compare(password, user.passwordHash);
         if (!ok) return null;
 
-        return { id: user.id, email: user.email };
+        return { id: String(user.id), email: user.email };
       },
     }),
   ],
