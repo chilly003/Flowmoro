@@ -16,7 +16,7 @@ export default function Flowmoro() {
 
   useEffect(()=> {
     if (status === "authenticated") {
-      router.replace("/app/main");
+      router.replace("/main");
     }
   }, [status, router])
 

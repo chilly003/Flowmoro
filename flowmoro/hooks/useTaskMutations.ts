@@ -51,7 +51,7 @@ export function useTaskMutations({ date }: UseTaskMutationsOptions) {
     },
   });
 
-  // 4) 정렬 변경
+  // 4) 정렬 변경 -> 우선순위 떨어짐. 시간 나면..
   const reorderTasksMutation = useMutation({
     mutationFn: (payload: ReorderTasksPayload) => reorderTasks(payload),
     onSuccess: () => {

@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { IoChevronBack, IoChevronForward, IoRefresh } from "react-icons/io5";
+import { IoChevronBack, IoChevronForward } from "react-icons/io5";
+import { useDateStore } from "@/hooks/useDateStore";
 
 function startOfDay(date: Date) {
   const d = new Date(date);
@@ -25,19 +25,15 @@ function formatKoreanDate(date: Date) {
 }
 
 export default function Daytime() {
-  const [selectedDate, setSelectedDate] = useState(() => startOfDay(new Date()));
-
-  const handlePrev = () => setSelectedDate((prev) => addDays(prev, -1));
-  const handleNext = () => setSelectedDate((prev) => addDays(prev, 1));
-  const handleResetToday = () => setSelectedDate(startOfDay(new Date()));
+  const selectedDate = useDateStore((s) => s.selectedDate);
+  const prevDay = useDateStore((s) => s.prevDay);
+  const nextDay = useDateStore((s) => s.nextDay);
+  // const resetToday = useDateStore((s) => s.resetToday);
 
   const displayLabel = formatKoreanDate(selectedDate);
 
   return (
-    <section className="w-full max-w-xl mx-auto py-6">
-      {/* 제목 (전역 h1 스타일 사용) */}
-      <h1 className="mb-4 text-center">Daytime</h1>
-
+    <section className="w-full max-w-xl mx-auto py-6 px-6">
       {/* 날짜 선택 바 */}
       <div
         className="
@@ -48,7 +44,7 @@ export default function Daytime() {
         {/* 이전 날짜 버튼 */}
         <button
           type="button"
-          onClick={handlePrev}
+          onClick={useDateStore().prevDay}
           className="
             flex items-center justify-center
             h-10 w-10
@@ -67,10 +63,10 @@ export default function Daytime() {
         <div className="flex flex-col items-center gap-1">
           <div
             className="
-              px-3 py-1.5
+              px-5 py-3
               rounded-full
               bg-white
-              text-sm font-semibold
+              text-lg font-semibold
               text-blues-500
               border border-blues-200
             "
@@ -78,7 +74,7 @@ export default function Daytime() {
             {displayLabel}
           </div>
 
-          <button
+          {/* <button
             type="button"
             onClick={handleResetToday}
             className="
@@ -92,14 +88,14 @@ export default function Daytime() {
               transition
             "
           >
-            <IoRefresh size={20} />
-          </button>
+            오늘로
+          </button> */}
         </div>
 
         {/* 다음 날짜 버튼 */}
         <button
           type="button"
-          onClick={handleNext}
+          onClick={nextDay}
           className="
             flex items-center justify-center
             h-10 w-10
