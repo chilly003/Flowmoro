@@ -11,3 +11,7 @@
   --color-blues-400: #9AA6B2;
   --color-blues-500: #1B3C53;
 }
+
+h1 {
+    @apply text-2xl font-bold;
+}
