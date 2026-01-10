@@ -13,3 +13,23 @@ export async function signup(payload: SignupPayload) {
   }
   return json.data;
 }
+
+export async function withdraw() {
+  const res = await fetch('/api/auth/withdraw', {
+    method: 'DELETE', 
+    headers:{'Content-Type': 'application/json'}
+  })
+
+  if (!res.ok) {
+    let message = "회원탈퇴 실패"
+    try {
+      const data = await res.json();
+      if (data?.message) message = data.message;
+    } catch {
+      // ignore
+    }
+    throw new Error(message);
+  }
+
+  return true;
+}

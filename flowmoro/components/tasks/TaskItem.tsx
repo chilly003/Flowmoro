@@ -3,15 +3,15 @@
 
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useTasksQuery } from "@/hooks/useTasksQuery";
+import { useTasksQuery } from "@/hooks/tasks/useTasksQuery";
 import { useDateStore } from "@/hooks/useDateStore";
-import { useTaskMutations } from "@/hooks/useTaskMutations";
+import { useTaskMutations } from "@/hooks/tasks/useTaskMutations";
 import { isToday } from "@/lib/date-utils";
 import type { TaskStatus } from "@/lib/api/tasks";
 
 export default function TaskItem() {
   const date = useDateStore((s) => s.selectedDateKey);
-  const { tasks, isError, error } = useTasksQuery(date);
+  const { tasks } = useTasksQuery(date);
   const router = useRouter();
   const { createTaskMutation, deleteTaskMutation, updateStatusMutation } =
     useTaskMutations({ date });
@@ -43,15 +43,6 @@ export default function TaskItem() {
     await updateStatusMutation.mutateAsync({ taskId, status: next });
   };
 
-
-  if (isError) {
-    console.error(error);
-    return (
-      <div className="p-4 text-red-600">
-        에러 발생: {error instanceof Error ? error.message : String(error)}
-      </div>
-    );
-  }
 
   return (
     <main className="w-full max-w-xl mx-auto p-4 space-y-4">
@@ -115,35 +106,34 @@ export default function TaskItem() {
                         {t.title}
                       </span>
 
-                      {typeof t.totalMinutes === "number" && (
+                      {typeof t.totalTrackedMinutes === "number" && (
                         <span className="text-xs text-zinc-500">
-                          누적: {t.totalMinutes}분
+                          집중시간: {t.totalTrackedMinutes}분
                         </span>
                       )}
                     </div>
                   </div>
 
-                  {/* ✅ 오늘만 삭제 버튼 노출 (오늘 아닐 때는 조회만) */}
                   {canEdit && (
                     <div className="flex gap-1">
-                    <button
-                      type="button"
-                      onClick={() => handleDelete(t.id)}
-                      disabled={deleteTaskMutation.isPending}
-                      className="rounded-md border px-2 py-1 text-xs text-red-600"
-                      aria-label="삭제"
-                    >
-                      삭제
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => router.push(`/time/${t.id}?date=${date}`)}
-                      disabled={deleteTaskMutation.isPending}
-                      className="rounded-md border px-2 py-1 text-xs text-blues-500"
-                      aria-label="뽀모도로"
-                    >
-                      뽀모도로
-                    </button>
+                      <button
+                        type="button"
+                        onClick={() => handleDelete(t.id)}
+                        disabled={deleteTaskMutation.isPending}
+                        className="rounded-md border px-2 py-1 text-xs text-red-600"
+                        aria-label="삭제"
+                      >
+                        삭제
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => router.push(`/time/${t.id}?date=${date}`)}
+                        disabled={deleteTaskMutation.isPending}
+                        className="rounded-md border px-2 py-1 text-xs text-blues-500"
+                        aria-label="뽀모도로"
+                      >
+                        뽀모도로
+                      </button>
                     </div>
                   )}
                 </li>
@@ -152,15 +142,6 @@ export default function TaskItem() {
           </ul>
         )}
       </section>
-
-      {/* mutation 에러(선택) */}
-      {(createTaskMutation.isError ||
-        deleteTaskMutation.isError ||
-        updateStatusMutation.isError) && (
-        <div className="text-sm text-red-600 text-center">
-          작업 처리 중 오류가 발생했습니다.
-        </div>
-      )}
     </main>
   );
 }

@@ -10,7 +10,7 @@ const jua = Jua({ weight: "400", subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Flowmoro",
-  description: "할일 체크 뽀모도로",
+  description: "할일 체크 뽀모도로 플로우모로",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

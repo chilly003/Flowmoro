@@ -2,14 +2,14 @@
 
 import { useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useTasksQuery } from "@/hooks/useTasksQuery";
+import { useTasksQuery } from "@/hooks/tasks/useTasksQuery";
 
 export default function TimeClient({ taskId }: { taskId: number }) {
   const router = useRouter();
   const sp = useSearchParams();
 
-  const date = sp.get("date"); // ✅ main에서 넘긴 date
-  const { tasks, isLoading, isError } = useTasksQuery(date);
+  const date = sp.get("date");
+  const { tasks, isError } = useTasksQuery(date);
 
   const task = useMemo(() => {
     return tasks.find((t: any) => Number(t.id) === taskId);
@@ -21,7 +21,7 @@ export default function TimeClient({ taskId }: { taskId: number }) {
 
   const goTimer = (minutes: number) => {
     // ✅ timer에서도 taskId + date + minutes 전달 (API 추가 없이 유지)
-    router.push(`/app/timer?taskId=${taskId}&date=${date}&m=${minutes}`);
+    router.push(`/timer?taskId=${taskId}&date=${date}&m=${minutes}`);
   };
 
   const customMinutes = useMemo(() => {
@@ -30,15 +30,6 @@ export default function TimeClient({ taskId }: { taskId: number }) {
     return Math.floor(n);
   }, [custom]);
 
-  if (!Number.isFinite(taskId)) {
-    return <div className="p-4 text-red-600">유효하지 않은 taskId 입니다.</div>;
-  }
-
-  if (!date) {
-    return <div className="p-4 text-red-600">date 파라미터가 없습니다.</div>;
-  }
-
-  if (isLoading) return <div className="p-4">로딩 중...</div>;
   if (isError) return <div className="p-4 text-red-600">일정을 불러오지 못했습니다.</div>;
 
   return (
