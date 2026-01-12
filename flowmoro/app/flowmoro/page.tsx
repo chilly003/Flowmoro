@@ -26,7 +26,7 @@ export default function Flowmoro() {
   }
 
   return (
-    <div>
+    <div className="">
       {view === "login" && (
         <Login onSwitchToSignup={() => setView("signup")} />
       )}

@@ -46,11 +46,6 @@ export default function TaskItem() {
 
   return (
     <main className="w-full max-w-xl mx-auto p-4 space-y-4">
-      {/* 헤더 */}
-      <header className="space-y-1 text-center">
-        <h1>{date}</h1>
-      </header>
-
       {/* ✅ 오늘만 “추가 UI” 노출 */}
       {canEdit && (
         <section className="flex gap-2">
@@ -58,7 +53,7 @@ export default function TaskItem() {
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             placeholder="새 일정 제목"
-            className="flex-1 rounded-md border px-3 py-2 text-sm"
+            className="flex-1 rounded-md border border-blues-400 px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-blues-400"
             disabled={createTaskMutation.isPending}
           />
           <button
@@ -83,10 +78,14 @@ export default function TaskItem() {
               return (
                 <li
                   key={t.id}
-                  className="flex items-center justify-between rounded-md border px-3 py-2"
+                  className={[
+                    "flex items-center justify-between rounded-md border px-3 py-2 transition-colors",
+                    checked
+                      ? "bg-blues-300 border-blues-300"
+                      : "bg-blues-100 border-blues-400",
+                  ].join(" ")}
                 >
                   <div className="flex items-center gap-3">
-                    {/* ✅ 체크박스: 오늘만 토글 가능 */}
                     <input
                       type="checkbox"
                       checked={checked}
