@@ -2,11 +2,14 @@
 
 import { useMutation } from "@tanstack/react-query";
 import { signIn, signOut } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import { signup, withdraw } from "@/lib/api/auth";
 
 type Credentials = { email: string; password: string };
 
 export function useAuthMutations() {
+  const router = useRouter();
+
   const signupMutation = useMutation({
     mutationFn: (payload: Credentials) => signup(payload),
   });
@@ -24,6 +27,9 @@ export function useAuthMutations() {
       }
       return true;
     },
+    onSuccess: () => {
+      router.push("/main");
+    },
   });
 
   const signupAndLoginMutation = useMutation({
@@ -37,12 +43,15 @@ export function useAuthMutations() {
       if (!res?.ok) throw new Error("회원가입은 완료됐지만 로그인에 실패했습니다.");
       return true;
     },
+    onSuccess: () => {
+      router.push("/main");
+    },
   });
 
   const withdrawMutation = useMutation({
     mutationFn: async () => {
       await withdraw();
-      await signOut({callbackUrl: '/flowmoro'});
+      await signOut({ callbackUrl: "/" });
       return true;
     },
   });

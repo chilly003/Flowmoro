@@ -9,6 +9,7 @@ const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"]
 const jua = Jua({ weight: "400", subsets: ["latin"] });
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://flowmoro.vercel.app'),
   title: {
     template: '%s | Flowmoro',
     default: 'Flowmoro - 할일 체크 뽀모도로',
@@ -17,7 +18,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Flowmoro',
     description: "집중력을 높여주는 일정 관리 및 뽀모도로 타이머",
-    url: 'https://flowmoro.com',
+    url: 'https://flowmoro.vercel.app',
     siteName: 'Flowmoro',
     images: [
       {

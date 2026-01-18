@@ -36,7 +36,6 @@ export default function NavBar() {
       await withdrawMutation.mutateAsync();
       setOpenModal(false);
     } catch (e) {
-      console.error(e);
       alert("회원탈퇴에 실패했습니다.");
     }
   };
