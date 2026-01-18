@@ -50,7 +50,7 @@ export default function Login({ onSwitchToSignup }: LoginProps) {
             <input
               type="email"
               {...register("email", { required: "이메일을 입력하세요." })}
-              className="w-full focus:outline-none focus:ring-1 focus:ring-blues-400 rounded px-3 py-2"
+              className="w-full focus:outline-none focus:ring-1 focus:ring-blues-400 rounded px-3 py-2 bg-blues-200"
             />
             {errors.email && (
               <p className="text-xs text-red-500">{errors.email.message}</p>
@@ -65,7 +65,7 @@ export default function Login({ onSwitchToSignup }: LoginProps) {
               {...register("password", {
                 required: "비밀번호를 입력하세요.",
               })}
-              className="w-full focus:outline-none focus:ring-1 focus:ring-blues-400 rounded px-3 py-2"
+              className="w-full focus:outline-none focus:ring-1 focus:ring-blues-400 rounded px-3 py-2 bg-blues-200"
             />
             {errors.password && (
               <p className="text-xs text-red-500">{errors.password.message}</p>
