@@ -45,7 +45,7 @@ export default function Signup({ onSwitchToLogin }: SignupProps) {
           <input
             type="email"
             {...register("email", { required: "이메일을 입력하세요." })}
-            className="w-full rounded px-3 py-2 focus:outline-none focus:ring-1 focus:ring-blues-400"
+            className="w-full rounded px-3 py-2 focus:outline-none focus:ring-1 focus:ring-blues-400 bg-blues-200"
           />
           {errors.email && (
             <p className="text-xs text-red-500">{errors.email.message}</p>
@@ -64,7 +64,7 @@ export default function Signup({ onSwitchToLogin }: SignupProps) {
                 message: "비밀번호는 8자 이상이어야 합니다.",
               },
             })}
-            className="w-full rounded px-3 py-2 focus:outline-none focus:ring-1 focus:ring-blues-400"
+            className="w-full rounded px-3 py-2 focus:outline-none focus:ring-1 focus:ring-blues-400 bg-blues-200"
           />
           {errors.password && (
             <p className="text-xs text-red-500">{errors.password.message}</p>
