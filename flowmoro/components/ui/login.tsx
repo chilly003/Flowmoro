@@ -41,7 +41,7 @@ export default function Login({ onSwitchToSignup }: LoginProps) {
   return (
     <>
       <div className="max-w-md mx-auto p-6">
-        <h2 className="text-xl font-semibold mb-4">로그인</h2>
+        <h2 className="text-ml font-semibold mb-3 text-blues-500">로그인</h2>
 
         <form onSubmit={onSubmit} className="space-y-4">
           {/* 이메일 */}
@@ -50,7 +50,7 @@ export default function Login({ onSwitchToSignup }: LoginProps) {
             <input
               type="email"
               {...register("email", { required: "이메일을 입력하세요." })}
-              className="w-full border rounded px-3 py-2"
+              className="w-full focus:outline-none focus:ring-1 focus:ring-blues-400 rounded px-3 py-2"
             />
             {errors.email && (
               <p className="text-xs text-red-500">{errors.email.message}</p>
@@ -65,7 +65,7 @@ export default function Login({ onSwitchToSignup }: LoginProps) {
               {...register("password", {
                 required: "비밀번호를 입력하세요.",
               })}
-              className="w-full border rounded px-3 py-2"
+              className="w-full focus:outline-none focus:ring-1 focus:ring-blues-400 rounded px-3 py-2"
             />
             {errors.password && (
               <p className="text-xs text-red-500">{errors.password.message}</p>

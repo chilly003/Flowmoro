@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { signOut } from "next-auth/react";
 import { useAuthMutations } from "@/hooks/useAuthMutations";
 import { useDateStore } from "@/hooks/useDateStore";
-import { IoLeaf, IoMenu, IoClose, IoTodayOutline, IoLogOutOutline, IoTrashOutline } from "react-icons/io5";
+import { IoCloud, IoMenu, IoClose, IoTodayOutline, IoLogOutOutline, IoTrashOutline } from "react-icons/io5";
 import Modal from "./modal";
 
 export default function NavBar() {
@@ -62,7 +62,7 @@ export default function NavBar() {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <span className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-blues-100 text-blues-500">
-                <IoLeaf size={18} />
+                <IoCloud size={18} />
               </span>
               <span className="text-sm font-semibold text-zinc-800">Flowmoro</span>
             </div>

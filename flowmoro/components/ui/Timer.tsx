@@ -22,7 +22,7 @@ export default function TimerCircle({
     return Math.max(0, Math.min(1, ratio));
   }, [remaining, totalSeconds]);
 
-  const size = 260;
+  const size = 300;
   const stroke = 14;
   const r = (size - stroke) / 2;
   const c = 2 * Math.PI * r;
@@ -31,7 +31,7 @@ export default function TimerCircle({
   return (
     <section className="mt-6 flex justify-center">
       <div className="relative" style={{ width: size, height: size }}>
-        <div className="absolute inset-0 rounded-full bg-blues-100/60" />
+        <div className="absolute inset-0 rounded-full bg-white/10" />
 
         <svg width={size} height={size} className="relative" aria-label="타이머 진행률">
           <circle
@@ -40,7 +40,6 @@ export default function TimerCircle({
             r={r}
             fill="none"
             strokeWidth={stroke}
-            className="stroke-zinc-200"
           />
           <circle
             cx={size / 2}
@@ -49,7 +48,7 @@ export default function TimerCircle({
             fill="none"
             strokeWidth={stroke}
             strokeLinecap="round"
-            className="stroke-blues-500"
+            className="stroke-white"
             strokeDasharray={c}
             strokeDashoffset={dashOffset}
             transform={`rotate(-90 ${size / 2} ${size / 2})`}
@@ -57,7 +56,7 @@ export default function TimerCircle({
         </svg>
 
         <div className="absolute inset-0 flex flex-col items-center justify-center">
-          <div className="text-4xl font-bold tracking-tight text-zinc-800">
+          <div className="text-5xl font-bold tracking-tight text-white">
             {formatMMSS(remaining)}
           </div>
         </div>

@@ -9,7 +9,7 @@ export async function signup(payload: SignupPayload) {
 
   const json = await res.json();
   if (!res.ok || !json?.success) {
-    throw new Error(json?.error?.message ?? "회원가입에 실패했습니다.");
+    throw new Error(json?.error?.message ?? "회원가입에 실패했습니다. 이미 가입된 회원입니다.");
   }
   return json.data;
 }

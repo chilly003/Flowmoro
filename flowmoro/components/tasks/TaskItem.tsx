@@ -3,6 +3,7 @@
 
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
+import { IoClose, IoTimeOutline } from "react-icons/io5";
 import { useTasksQuery } from "@/hooks/tasks/useTasksQuery";
 import { useDateStore } from "@/hooks/useDateStore";
 import { useTaskMutations } from "@/hooks/tasks/useTaskMutations";
@@ -45,7 +46,7 @@ export default function TaskItem() {
 
 
   return (
-    <main className="w-full max-w-xl mx-auto p-4 space-y-4">
+    <main className="w-full max-w-xl mx-auto py-4 px-6 space-y-4">
       {/* ✅ 오늘만 “추가 UI” 노출 */}
       {canEdit && (
         <section className="flex gap-2">
@@ -53,14 +54,14 @@ export default function TaskItem() {
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             placeholder="새 일정 제목"
-            className="flex-1 rounded-md border border-blues-400 px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-blues-400"
+            className="input-base text-sm"
             disabled={createTaskMutation.isPending}
           />
           <button
             type="button"
             onClick={handleCreate}
             disabled={createTaskMutation.isPending || !title.trim()}
-            className="rounded-md bg-blues-500 px-4 py-2 text-sm text-white disabled:opacity-50"
+            className="btn-primary"
           >
             추가
           </button>
@@ -72,17 +73,17 @@ export default function TaskItem() {
         {(tasks ?? []).length === 0 ? (
           <div className="text-sm text-zinc-500 text-center">일정이 없습니다.</div>
         ) : (
-          <ul className="space-y-2">
+          <ul className="space-y-3">
             {tasks.map((t: any) => {
               const checked = t.status === "DONE";
               return (
                 <li
                   key={t.id}
                   className={[
-                    "flex items-center justify-between rounded-md border px-3 py-2 transition-colors",
+                    "flex items-center justify-between rounded-md border border-2 px-3 py-2 transition-colors",
                     checked
                       ? "bg-blues-300 border-blues-300"
-                      : "bg-blues-100 border-blues-400",
+                      : "bg-white border-blues-300",
                   ].join(" ")}
                 >
                   <div className="flex items-center gap-3">
@@ -95,7 +96,7 @@ export default function TaskItem() {
                       aria-label="완료 체크"
                     />
 
-                    <div className="flex flex-col">
+                    <div className="flex flex-row gap-2">
                       <span
                         className={[
                           "text-sm",
@@ -106,7 +107,7 @@ export default function TaskItem() {
                       </span>
 
                       {typeof t.totalTrackedMinutes === "number" && (
-                        <span className="text-xs text-zinc-500">
+                        <span className="text-sm text-blues-450">
                           집중시간: {t.totalTrackedMinutes}분
                         </span>
                       )}
@@ -114,27 +115,33 @@ export default function TaskItem() {
                   </div>
 
                   {canEdit && (
-                    <div className="flex gap-1">
+                    <div className="flex flex-col gap-1">
+                      {/* 삭제 버튼 */}
                       <button
                         type="button"
                         onClick={() => handleDelete(t.id)}
                         disabled={deleteTaskMutation.isPending}
-                        className="rounded-md border px-2 py-1 text-xs text-red-600"
                         aria-label="삭제"
+                        className=" rounded-md text-red-400 transition hover:text-red-600 hover:scale-130 hover:font-semibold disabled:cursor-not-allowed"
                       >
-                        삭제
+                        <IoClose size={18} />
                       </button>
-                      <button
-                        type="button"
-                        onClick={() => router.push(`/time/${t.id}?date=${date}`)}
-                        disabled={deleteTaskMutation.isPending}
-                        className="rounded-md border px-2 py-1 text-xs text-blues-500"
-                        aria-label="뽀모도로"
-                      >
-                        뽀모도로
-                      </button>
+
+                      {/* 뽀모도로 버튼 */}
+                      {!checked && (
+                        <button
+                          type="button"
+                          onClick={() => router.push(`/time/${t.id}?date=${date}`)}
+                          disabled={deleteTaskMutation.isPending}
+                          aria-label="뽀모도로"
+                          className="rounded-md text-blues-400 transition hover:text-blues-500 hover:scale-130 hover:font-semibold disabled:cursor-not-allowed"
+                        >
+                          <IoTimeOutline size={18} />
+                        </button>
+                      )}
                     </div>
                   )}
+
                 </li>
               );
             })}
