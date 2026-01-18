@@ -3,15 +3,16 @@
 
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useTasksQuery } from "@/hooks/useTasksQuery";
+import { IoClose, IoTimeOutline } from "react-icons/io5";
+import { useTasksQuery } from "@/hooks/tasks/useTasksQuery";
 import { useDateStore } from "@/hooks/useDateStore";
-import { useTaskMutations } from "@/hooks/useTaskMutations";
+import { useTaskMutations } from "@/hooks/tasks/useTaskMutations";
 import { isToday } from "@/lib/date-utils";
 import type { TaskStatus } from "@/lib/api/tasks";
 
 export default function TaskItem() {
   const date = useDateStore((s) => s.selectedDateKey);
-  const { tasks, isError, error } = useTasksQuery(date);
+  const { tasks } = useTasksQuery(date);
   const router = useRouter();
   const { createTaskMutation, deleteTaskMutation, updateStatusMutation } =
     useTaskMutations({ date });
@@ -44,22 +45,8 @@ export default function TaskItem() {
   };
 
 
-  if (isError) {
-    console.error(error);
-    return (
-      <div className="p-4 text-red-600">
-        에러 발생: {error instanceof Error ? error.message : String(error)}
-      </div>
-    );
-  }
-
   return (
-    <main className="w-full max-w-xl mx-auto p-4 space-y-4">
-      {/* 헤더 */}
-      <header className="space-y-1 text-center">
-        <h1>{date}</h1>
-      </header>
-
+    <main className="w-full max-w-xl mx-auto py-4 px-6 space-y-4">
       {/* ✅ 오늘만 “추가 UI” 노출 */}
       {canEdit && (
         <section className="flex gap-2">
@@ -67,14 +54,14 @@ export default function TaskItem() {
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             placeholder="새 일정 제목"
-            className="flex-1 rounded-md border px-3 py-2 text-sm"
+            className="input-base text-sm"
             disabled={createTaskMutation.isPending}
           />
           <button
             type="button"
             onClick={handleCreate}
             disabled={createTaskMutation.isPending || !title.trim()}
-            className="rounded-md bg-blues-500 px-4 py-2 text-sm text-white disabled:opacity-50"
+            className="btn-primary"
           >
             추가
           </button>
@@ -86,16 +73,20 @@ export default function TaskItem() {
         {(tasks ?? []).length === 0 ? (
           <div className="text-sm text-zinc-500 text-center">일정이 없습니다.</div>
         ) : (
-          <ul className="space-y-2">
+          <ul className="space-y-3">
             {tasks.map((t: any) => {
               const checked = t.status === "DONE";
               return (
                 <li
                   key={t.id}
-                  className="flex items-center justify-between rounded-md border px-3 py-2"
+                  className={[
+                    "flex items-center justify-between rounded-md border border-2 px-3 py-2 transition-colors",
+                    checked
+                      ? "bg-blues-300 border-blues-300"
+                      : "bg-white border-blues-300",
+                  ].join(" ")}
                 >
                   <div className="flex items-center gap-3">
-                    {/* ✅ 체크박스: 오늘만 토글 가능 */}
                     <input
                       type="checkbox"
                       checked={checked}
@@ -105,7 +96,7 @@ export default function TaskItem() {
                       aria-label="완료 체크"
                     />
 
-                    <div className="flex flex-col">
+                    <div className="flex flex-row gap-2">
                       <span
                         className={[
                           "text-sm",
@@ -115,52 +106,48 @@ export default function TaskItem() {
                         {t.title}
                       </span>
 
-                      {typeof t.totalMinutes === "number" && (
-                        <span className="text-xs text-zinc-500">
-                          누적: {t.totalMinutes}분
+                      {typeof t.totalTrackedMinutes === "number" && (
+                        <span className="text-sm text-blues-450">
+                          집중시간: {t.totalTrackedMinutes}분
                         </span>
                       )}
                     </div>
                   </div>
 
-                  {/* ✅ 오늘만 삭제 버튼 노출 (오늘 아닐 때는 조회만) */}
                   {canEdit && (
-                    <div className="flex gap-1">
-                    <button
-                      type="button"
-                      onClick={() => handleDelete(t.id)}
-                      disabled={deleteTaskMutation.isPending}
-                      className="rounded-md border px-2 py-1 text-xs text-red-600"
-                      aria-label="삭제"
-                    >
-                      삭제
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => router.push(`/time/${t.id}?date=${date}`)}
-                      disabled={deleteTaskMutation.isPending}
-                      className="rounded-md border px-2 py-1 text-xs text-blues-500"
-                      aria-label="뽀모도로"
-                    >
-                      뽀모도로
-                    </button>
+                    <div className="flex flex-col gap-1">
+                      {/* 삭제 버튼 */}
+                      <button
+                        type="button"
+                        onClick={() => handleDelete(t.id)}
+                        disabled={deleteTaskMutation.isPending}
+                        aria-label="삭제"
+                        className=" rounded-md text-red-400 transition hover:text-red-600 hover:scale-130 hover:font-semibold disabled:cursor-not-allowed"
+                      >
+                        <IoClose size={18} />
+                      </button>
+
+                      {/* 뽀모도로 버튼 */}
+                      {!checked && (
+                        <button
+                          type="button"
+                          onClick={() => router.push(`/time/${t.id}?date=${date}`)}
+                          disabled={deleteTaskMutation.isPending}
+                          aria-label="뽀모도로"
+                          className="rounded-md text-blues-400 transition hover:text-blues-500 hover:scale-130 hover:font-semibold disabled:cursor-not-allowed"
+                        >
+                          <IoTimeOutline size={18} />
+                        </button>
+                      )}
                     </div>
                   )}
+
                 </li>
               );
             })}
           </ul>
         )}
       </section>
-
-      {/* mutation 에러(선택) */}
-      {(createTaskMutation.isError ||
-        deleteTaskMutation.isError ||
-        updateStatusMutation.isError) && (
-        <div className="text-sm text-red-600 text-center">
-          작업 처리 중 오류가 발생했습니다.
-        </div>
-      )}
     </main>
   );
 }

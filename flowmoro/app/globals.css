@@ -8,10 +8,28 @@
   --color-blues-100: #F8FAFC;
   --color-blues-200: #D9EAFD;
   --color-blues-300: #BCCCDC;
+  --color-blues-350: #bbc3cb;
   --color-blues-400: #9AA6B2;
+  --color-blues-450: #6c8290;
   --color-blues-500: #1B3C53;
 }
 
 h1 {
-    @apply text-2xl font-bold;
+  @apply text-2xl font-bold;
+}
+
+html, body {
+  overflow-x: hidden;
+}
+
+@layer components {
+  .btn-base {
+    @apply rounded-md border border-blues-400 px-3 py-2 hover:ring-1 hover:ring-blues-400 hover:outline-none;
+  }
+  .input-base {
+    @apply flex-1 rounded-md border border-blues-400 px-3 py-2 bg-white focus:outline-none focus:ring-1 focus:ring-blues-400;
+  }
+  .btn-primary {
+    @apply rounded-md bg-blues-500 px-4 py-2 text-sm text-white disabled:opacity-50 disabled:cursor-not-allowed;
+  }
 }

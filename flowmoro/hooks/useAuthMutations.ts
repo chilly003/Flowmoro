@@ -1,8 +1,8 @@
 "use client";
 
 import { useMutation } from "@tanstack/react-query";
-import { signIn } from "next-auth/react";
-import { signup } from "@/lib/api/auth";
+import { signIn, signOut } from "next-auth/react";
+import { signup, withdraw } from "@/lib/api/auth";
 
 type Credentials = { email: string; password: string };
 
@@ -19,8 +19,8 @@ export function useAuthMutations() {
         redirect: false,
       });
 
-      if (!res?.ok) {
-        throw new Error("이메일 또는 비밀번호가 올바르지 않습니다.");
+      if (!res || res.error) {
+        throw new Error("LOGIN_FAILED");
       }
       return true;
     },
@@ -39,5 +39,13 @@ export function useAuthMutations() {
     },
   });
 
-  return { signupMutation, loginMutation, signupAndLoginMutation };
+  const withdrawMutation = useMutation({
+    mutationFn: async () => {
+      await withdraw();
+      await signOut({callbackUrl: '/flowmoro'});
+      return true;
+    },
+  });
+
+  return { signupMutation, loginMutation, signupAndLoginMutation, withdrawMutation };
 }

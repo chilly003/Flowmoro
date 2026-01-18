@@ -23,6 +23,9 @@ export const { handlers, auth } = NextAuth({
           "SELECT id, email, passwordHash FROM USER WHERE email = ? LIMIT 1",
           [email],
         );
+
+        if (users.length === 0) return null;
+
         const user = users[0];
         if (!user?.passwordHash) return null;
 

@@ -2,14 +2,16 @@
 
 import { useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useTasksQuery } from "@/hooks/useTasksQuery";
+import { useTasksQuery } from "@/hooks/tasks/useTasksQuery";
+
+const PRESETS = [15, 30, 60] as const;
 
 export default function TimeClient({ taskId }: { taskId: number }) {
   const router = useRouter();
   const sp = useSearchParams();
 
-  const date = sp.get("date"); // ✅ main에서 넘긴 date
-  const { tasks, isLoading, isError } = useTasksQuery(date);
+  const date = sp.get("date");
+  const { tasks, isError } = useTasksQuery(date);
 
   const task = useMemo(() => {
     return tasks.find((t: any) => Number(t.id) === taskId);
@@ -17,65 +19,111 @@ export default function TimeClient({ taskId }: { taskId: number }) {
 
   const title = task?.title ?? `Task #${taskId}`;
 
+  const [selected, setSelected] = useState<number | null>(30);
   const [custom, setCustom] = useState("");
 
   const goTimer = (minutes: number) => {
-    // ✅ timer에서도 taskId + date + minutes 전달 (API 추가 없이 유지)
-    router.push(`/app/timer?taskId=${taskId}&date=${date}&m=${minutes}`);
+    router.push(`/timer?taskId=${taskId}&date=${date}&m=${minutes}`);
   };
 
   const customMinutes = useMemo(() => {
     const n = Number(custom);
-    if (!Number.isFinite(n) || n <= 0) return null;
-    return Math.floor(n);
+    if (!Number.isFinite(n)) return null;
+    const int = Math.floor(n);
+    if (int <= 0) return null;
+    return int;
   }, [custom]);
 
-  if (!Number.isFinite(taskId)) {
-    return <div className="p-4 text-red-600">유효하지 않은 taskId 입니다.</div>;
-  }
+  const startMinutes = selected ?? customMinutes ?? null;
 
-  if (!date) {
-    return <div className="p-4 text-red-600">date 파라미터가 없습니다.</div>;
-  }
-
-  if (isLoading) return <div className="p-4">로딩 중...</div>;
   if (isError) return <div className="p-4 text-red-600">일정을 불러오지 못했습니다.</div>;
 
+  const baseBtn =
+    "rounded-md border px-3 py-2 transition hover:outline-none active:scale-[0.99]";
+  const baseInput =
+    "rounded-md border px-3 py-2 outline-none transition hover:outline-none";
+
   return (
-    <main className="w-full max-w-xl mx-auto p-4 space-y-4">
-      <header className="text-center space-y-1">
-        <h1 className="text-lg font-semibold">{title}</h1>
-        <p className="text-sm text-zinc-500">집중 시간을 선택하세요.</p>
-      </header>
+    <main className="mx-auto w-full max-w-xl pt-28 pb-10">
+      <section className="rounded-md bg-white border border-zinc-200 p-5">
+        <header className="space-y-2">
+          <p className="text-3xl font-semibold text-black">{title}</p>
+          <p className="text-xl text-zinc-500">집중할 시간을 선택해 주세요.</p>
+        </header>
 
-      <section className="grid grid-cols-3 gap-2">
-        <button className="rounded-md border px-3 py-2 text-sm" onClick={() => goTimer(15)}>
-          15분
-        </button>
-        <button className="rounded-md border px-3 py-2 text-sm" onClick={() => goTimer(30)}>
-          30분
-        </button>
-        <button className="rounded-md border px-3 py-2 text-sm" onClick={() => goTimer(60)}>
-          1시간
-        </button>
-      </section>
+        <hr className="my-5 border-zinc-200 border-[1px]" />
 
-      <section className="flex gap-2">
-        <input
-          value={custom}
-          onChange={(e) => setCustom(e.target.value)}
-          inputMode="numeric"
-          placeholder="직접 입력(분)"
-          className="flex-1 rounded-md border px-3 py-2 text-sm"
-        />
-        <button
-          type="button"
-          onClick={() => customMinutes && goTimer(customMinutes)}
-          disabled={!customMinutes}
-          className="rounded-md bg-blues-500 px-4 py-2 text-sm text-white disabled:opacity-50"
-        >
-          시작
-        </button>
+        <div className="mt-5">
+          <p className="mb-2 font-medium text-zinc-500">빠른 선택</p>
+
+          <div className="grid grid-cols-3 gap-2">
+            {PRESETS.map((m) => {
+              const active = selected === m;
+              return (
+                <button
+                  key={m}
+                  type="button"
+                  onClick={() => {
+                    setSelected(m);
+                    setCustom("");
+                  }}
+                  aria-pressed={active}
+                  className={[
+                    baseBtn,
+                    "border-blues-400",
+                    "py-4 text-center",
+                    active ? "bg-blues-300/40 text-blues-500 border-2" : "bg-blues-100 text-zinc-800",
+                  ].join(" ")}
+                >
+                  <div className="text-2xl font-semibold leading-none">
+                    {m}
+                    <span className="ml-1 align-baseline text-sm font-normal text-zinc-500">
+                      분
+                    </span>
+                  </div>
+
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* 직접 입력 */}
+        <div className="mt-5">
+          <p className="mb-2 font-medium text-zinc-500">직접 입력</p>
+
+          <div className="flex gap-2">
+            <div className="relative w-full">
+              <input
+                value={custom}
+                onChange={(e) => {
+                  const v = e.target.value.replace(/[^\d]/g, "");
+                  setCustom(v);
+                  setSelected(null);
+                }}
+                inputMode="numeric"
+                placeholder="직접 입력(분)"
+                className={[baseInput, "w-full border-blues-400 pr-10 bg-blues-100"].join(" ")}
+                aria-label="집중 시간(분) 직접 입력"
+              />
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-24">
+          <button
+            type="button"
+            onClick={() => startMinutes && goTimer(startMinutes)}
+            disabled={!startMinutes}
+            className={[
+              baseBtn,
+              "w-full border-blues-400 py-3 text-base",
+              startMinutes ? "bg-zinc-800 text-white" : "bg-zinc-100 text-zinc-400 cursor-not-allowed",
+            ].join(" ")}
+          >
+            {startMinutes ? `${startMinutes}분 시작` : "시간을 선택해 주세요"}
+          </button>
+        </div>
       </section>
     </main>
   );

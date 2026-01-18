@@ -68,7 +68,7 @@ export default function Daytime() {
               bg-white
               text-lg font-semibold
               text-blues-500
-              border border-blues-200
+              border border-blues-400
             "
           >
             {displayLabel}
