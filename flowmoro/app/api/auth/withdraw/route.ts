@@ -28,7 +28,6 @@ export async function DELETE() {
 
     return NextResponse.json({ ok: true });
   } catch (e) {
-    console.error("[WITHDRAW ERROR]", e);
     return NextResponse.json({ ok: false, message: "Withdraw failed" }, { status: 500 });
   }
 }

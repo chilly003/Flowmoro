@@ -29,7 +29,6 @@ export default function Login({ onSwitchToSignup }: LoginProps) {
     try {
       await loginMutation.mutateAsync(data);
     } catch {
-      console.log("LOGIN_FAILED");
       setError("password", {
         type: "server",
         message: "이메일 또는 비밀번호가 올바르지 않습니다.",

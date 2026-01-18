@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useSession } from "next-auth/react"
 
 import Login from "@/components/ui/login";
 import Signup from "@/components/ui/signup";
@@ -10,12 +9,6 @@ type AuthView = "login" | "signup";
 
 export default function Flowmoro() {
   const [view, setView] = useState<AuthView>("login");
-  const { status } = useSession();
-
-  //로딩 화면 필요
-  if (status === "loading") {
-    return null;
-  }
 
   return (
     <div className="relative flex min-h-screen items-center justify-center overflow-hidden">

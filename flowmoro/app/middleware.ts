@@ -13,7 +13,7 @@ export async function middleware(req: Request) {
     return NextResponse.redirect(new URL("/main", url));
   }
 
-  // 로그인 안 한 상태에서 보호된 페이지 접근 → /flowmoro
+  // 로그인 안 한 상태에서 보호된 페이지 접근
   if (!isLoggedIn && !isAuthPage) {
     return NextResponse.redirect(new URL("/flowmoro", url));
   }
@@ -23,7 +23,6 @@ export async function middleware(req: Request) {
 
 export const config = {
   matcher: [
-    "/flowmoro",
     "/main/:path*",
     "/timer/:path*",
     "/time/:path*",
