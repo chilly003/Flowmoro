@@ -5,10 +5,19 @@ function isTruthy(v: string | undefined) {
   return v === "1" || v === "true" || v === "TRUE" || v === "yes" || v === "YES";
 }
 
+function normalizeNewlines(v: string) {
+  return v.replace(/\\n/g, "\n");
+}
+
 const isProd = process.env.NODE_ENV === "production";
 const useSSL = isTruthy(process.env.DB_SSL) || isProd;
 
-const sslOption = useSSL ? { rejectUnauthorized: true } : undefined;
+const sslOption = useSSL
+  ? {
+      rejectUnauthorized: true,
+      ca: process.env.DB_SSL_CA ? normalizeNewlines(process.env.DB_SSL_CA) : undefined,
+    }
+  : undefined;
 
 const pool = mysql.createPool({
   host: process.env.DB_HOST ?? "localhost",
