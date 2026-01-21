@@ -36,7 +36,7 @@ export function useTaskMutations({ date }: UseTaskMutationsOptions) {
 
   // 2) 삭제
   const deleteTaskMutation = useMutation({
-    mutationFn: (taskId: number) => deleteTask(taskId),
+    mutationFn: (taskId: string) => deleteTask(taskId),
     onSuccess: () => {
       invalidateTasks();
     },
@@ -44,7 +44,7 @@ export function useTaskMutations({ date }: UseTaskMutationsOptions) {
 
   // 3) 상태 변경 (YET <-> DONE)
   const updateStatusMutation = useMutation({
-    mutationFn: (input: { taskId: number; status: TaskStatus }) =>
+    mutationFn: (input: { taskId: string; status: TaskStatus }) =>
       updateTaskStatus(input.taskId, { status: input.status }),
     onSuccess: () => {
       invalidateTasks();
@@ -61,7 +61,7 @@ export function useTaskMutations({ date }: UseTaskMutationsOptions) {
 
   // 5) 시간 추가 (뽀모도로 종료 시)
   const addTaskTimeMutation = useMutation({
-    mutationFn: (input: { taskId: number; payload: AddTaskTimePayload }) =>
+    mutationFn: (input: { taskId: string; payload: AddTaskTimePayload }) =>
       addTaskTime(input.taskId, input.payload),
     onSuccess: () => {
       invalidateTasks();

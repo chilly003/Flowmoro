@@ -33,12 +33,12 @@ export default function TaskItem() {
     setTitle("");
   };
 
-  const handleDelete = async (taskId: number) => {
+  const handleDelete = async (taskId: string) => {
     if (!canEdit) return;
     await deleteTaskMutation.mutateAsync(taskId);
   };
 
-  const handleToggleDone = async (taskId: number, checked: boolean) => {
+  const handleToggleDone = async (taskId: string, checked: boolean) => {
     if (!canEdit) return;
     const next: TaskStatus = checked ? "DONE" : "YET";
     await updateStatusMutation.mutateAsync({ taskId, status: next });
