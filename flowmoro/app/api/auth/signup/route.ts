@@ -16,7 +16,7 @@ export async function POST(req: Request) {
     }
 
     const exists = await query<Existing>(
-        "SELECT id FROM USER WHERE email = ? LIMIT 1",
+        "SELECT id FROM user WHERE email = ? LIMIT 1",
         [normalizedEmail],
     )
     if (exists.length > 0) {
@@ -26,7 +26,7 @@ export async function POST(req: Request) {
     const passwordHash = await bcrypt.hash(password, 12)
 
     const result = await execute(
-        "INSERT INTO USER (email, passwordHash) VALUES (?, ?)",
+        "INSERT INTO user (email, passwordHash) VALUES (?, ?)",
         [normalizedEmail, passwordHash],
     )
 
