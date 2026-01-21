@@ -8,7 +8,7 @@ type TaskStatus = "YET" | "DONE";
 
 type TaskRow = {
   id: number;
-  userId: number;
+  userId: string;
   title: string;
   date: string;
   status: TaskStatus;
@@ -27,7 +27,7 @@ const deleteTask = async (
   { params }: RouteParams,
 ): Promise<Response> => {
   const userId = await requireUserId();
-  const { taskId } = await params;  
+  const { taskId } = await params;
   const id = Number(taskId);
 
   if (!taskId || Number.isNaN(id)) {
@@ -62,7 +62,7 @@ const updateTaskStatus = async (
   req: NextRequest,
   { params }: RouteParams,
 ): Promise<Response> => {
-  const { taskId } = await params;  
+  const { taskId } = await params;
   const id = Number(taskId);
   const userId = await requireUserId();
 

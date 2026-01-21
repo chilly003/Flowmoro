@@ -7,7 +7,7 @@ import { requireUserId } from "@/lib/auth-guard";
 type TaskStatus = "YET" | "DONE";
 type TaskRow = {
   id: number;
-  userId: number;
+  userId: string;
   title: string;
   date: string;
   status: TaskStatus;

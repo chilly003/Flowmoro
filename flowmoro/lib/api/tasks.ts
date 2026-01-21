@@ -4,7 +4,7 @@ export type TaskStatus = "YET" | "DONE";
 
 export interface Task {
     id: number;
-    userId: number;
+    userId: string;
     title: string;
     date: string;
     status: TaskStatus;

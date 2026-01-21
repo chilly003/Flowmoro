@@ -3,7 +3,7 @@
 import { useForm } from "react-hook-form";
 import { useAuthMutations } from "@/hooks/useAuthMutations";
 
-type SignupProps = { 
+type SignupProps = {
   onSwitchToLogin: () => void;
 };
 
@@ -19,8 +19,8 @@ export default function Signup({ onSwitchToLogin }: SignupProps) {
     register,
     handleSubmit,
     setError,
-    formState: { errors, isSubmitting },
-  } = useForm<FormValues>();
+    formState: { errors, isSubmitting, isValid },
+  } = useForm<FormValues>({ mode: "onChange" });
 
   const onSubmit = handleSubmit(async (data) => {
     try {
@@ -44,7 +44,13 @@ export default function Signup({ onSwitchToLogin }: SignupProps) {
           <label className="block text-sm mb-1">이메일</label>
           <input
             type="email"
-            {...register("email", { required: "이메일을 입력하세요." })}
+            {...register("email", {
+              required: "이메일을 입력하세요.",
+              pattern: {
+                value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                message: "유효한 이메일 주소를 입력하세요."
+              }
+            })}
             className="w-full rounded px-3 py-2 focus:outline-none focus:ring-1 focus:ring-blues-400 bg-blues-200"
           />
           {errors.email && (
@@ -54,9 +60,12 @@ export default function Signup({ onSwitchToLogin }: SignupProps) {
 
         {/* 비밀번호 */}
         <div>
-          <label className="block text-sm mb-1">비밀번호</label>
+          <label className="block text-sm mb-1">
+            비밀번호 <span className="text-xs text-gray-500 font-normal">(8자 이상)</span>
+          </label>
           <input
             type="password"
+            placeholder="8자 이상 입력해주세요"
             {...register("password", {
               required: "비밀번호를 입력하세요.",
               minLength: {
@@ -73,8 +82,11 @@ export default function Signup({ onSwitchToLogin }: SignupProps) {
 
         <button
           type="submit"
-          disabled={isSubmitting}
-          className="w-full bg-blues-400 hover:bg-blues-500 text-white py-2 rounded disabled:opacity-60"
+          disabled={isSubmitting || !isValid}
+          className={`w-full py-2 rounded text-white transition-colors duration-200 ${isValid && !isSubmitting
+            ? "bg-blues-400 hover:bg-blues-500"
+            : "bg-gray-300 cursor-not-allowed"
+            }`}
         >
           회원가입
         </button>
