@@ -55,6 +55,7 @@ export function withErrorHandling(handler: AppRouteHandler) {
     try {
       return await handler(req, context);
     } catch (error) {
+      console.error("[API_ERROR]", error);
       return fail(
         "INTERNAL_SERVER_ERROR",
         "서버 오류가 발생했습니다.",

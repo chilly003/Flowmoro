@@ -3,7 +3,7 @@
 export type TaskStatus = "YET" | "DONE";
 
 export interface Task {
-    id: number;
+    id: string; // UUID
     userId: string;
     title: string;
     date: string;
@@ -87,7 +87,7 @@ export async function createTask(
 
 export interface ReorderTasksPayload {
     date: string;
-    orderedIds: number[];
+    orderedIds: string[];
 }
 
 export interface ReorderTasksResult {
@@ -105,10 +105,10 @@ export async function reorderTasks(
 }
 
 export interface DeleteTaskResult {
-    id: number;
+    id: string;
 }
 
-export async function deleteTask(taskId: number): Promise<DeleteTaskResult> {
+export async function deleteTask(taskId: string): Promise<DeleteTaskResult> {
     return request<DeleteTaskResult>(`/api/tasks/${taskId}`, {
         method: "DELETE",
     });
@@ -119,7 +119,7 @@ export interface UpdateTaskStatusPayload {
 }
 
 export async function updateTaskStatus(
-    taskId: number,
+    taskId: string,
     payload: UpdateTaskStatusPayload,
 ): Promise<Task> {
     return request<Task>(`/api/tasks/${taskId}`, {
@@ -133,19 +133,19 @@ export interface AddTaskTimePayload {
 }
 
 export interface TaskTimeLog {
-    id: number;
-    taskId: number;
+    id: string;
+    taskId: string;
     durationMinutes: number;
     createdAt: string;
 }
 
 export interface AddTaskTimeResult {
-    taskId: number;
+    taskId: string;
     addedMinutes: TaskTimeLog;
 }
 
 export async function addTaskTime(
-    taskId: number,
+    taskId: string,
     payload: AddTaskTimePayload,
 ): Promise<AddTaskTimeResult> {
     return request<AddTaskTimeResult>(`/api/tasks/${taskId}/time`, {

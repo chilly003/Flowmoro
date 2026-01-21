@@ -7,7 +7,7 @@ import { requireUserId } from "@/lib/auth-guard";
 type TaskStatus = "YET" | "DONE";
 
 type TaskRow = {
-  id: number;
+  id: string;
   userId: string;
   title: string;
   date: string;
@@ -28,9 +28,8 @@ const deleteTask = async (
 ): Promise<Response> => {
   const userId = await requireUserId();
   const { taskId } = await params;
-  const id = Number(taskId);
 
-  if (!taskId || Number.isNaN(id)) {
+  if (!taskId) {
     return fail(
       "VALIDATION_ERROR",
       "유효한 taskId가 필요합니다.",
@@ -40,10 +39,10 @@ const deleteTask = async (
 
   const result: any = await execute(
     `
-    DELETE FROM Task
-    WHERE id = ? AND userId = ?
+    DELETE FROM task
+    WHERE id = ? AND user_id = ?
     `,
-    [id, userId],
+    [taskId, userId],
   );
 
   if (result.affectedRows === 0) {
@@ -54,7 +53,7 @@ const deleteTask = async (
     );
   }
 
-  return ok({ id }, 200);
+  return ok({ id: taskId }, 200);
 };
 
 // PATCH
@@ -63,10 +62,9 @@ const updateTaskStatus = async (
   { params }: RouteParams,
 ): Promise<Response> => {
   const { taskId } = await params;
-  const id = Number(taskId);
   const userId = await requireUserId();
 
-  if (!taskId || Number.isNaN(id)) {
+  if (!taskId) {
     return fail(
       "VALIDATION_ERROR",
       "유효한 taskId가 필요합니다.",
@@ -87,11 +85,11 @@ const updateTaskStatus = async (
 
   const result: any = await execute(
     `
-    UPDATE Task
+    UPDATE task
     SET status = ?
-    WHERE id = ? AND userId = ?
+    WHERE id = ? AND user_id = ?
     `,
-    [status, id, userId],
+    [status, taskId, userId],
   );
 
   if (result.affectedRows === 0) {
@@ -104,11 +102,19 @@ const updateTaskStatus = async (
 
   const [updated] = await query<TaskRow>(
     `
-    SELECT id, userId, title, date, status, \`order\`, totalTrackedMinutes, createdAt
-    FROM Task
+    SELECT
+      id,
+      user_id as userId,
+      title,
+      date,
+      status,
+      sort_order as \`order\`,
+      total_tracked_minutes as totalTrackedMinutes,
+      created_at as createdAt
+    FROM task
     WHERE id = ?
     `,
-    [id],
+    [taskId],
   );
 
   if (!updated) {

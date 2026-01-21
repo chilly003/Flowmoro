@@ -1,12 +1,12 @@
-// src/app/api/tasks/route.ts
 import { NextRequest } from "next/server";
 import { query, execute } from "@/lib/db";
 import { ok, fail, withErrorHandling } from "@/lib/api-utils";
 import { requireUserId } from "@/lib/auth-guard";
+import { v4 as uuidv4 } from 'uuid';
 
 type TaskStatus = "YET" | "DONE";
 type TaskRow = {
-  id: number;
+  id: string;
   userId: string;
   title: string;
   date: string;
@@ -32,10 +32,18 @@ const getTasks = async (req: NextRequest): Promise<Response> => {
 
   const tasks = await query<TaskRow>(
     `
-    SELECT id, userId, title, date, status, \`order\`, totalTrackedMinutes, createdAt
-    FROM Task
-    WHERE userId = ? AND DATE(date) = ?
-    ORDER BY \`order\` ASC
+    SELECT 
+      id, 
+      user_id as userId, 
+      title, 
+      date, 
+      status, 
+      sort_order as \`order\`, 
+      total_tracked_minutes as totalTrackedMinutes, 
+      created_at as createdAt
+    FROM task
+    WHERE user_id = ? AND DATE(date) = ?
+    ORDER BY sort_order ASC
     `,
     [userId, dateParam]
   )
@@ -71,34 +79,40 @@ const createTask = async (req: NextRequest): Promise<Response> => {
   // 1) 해당 날짜의 가장 큰 order 조회
   const [row] = await query<{ maxOrder: number | null }>(
     `
-    SELECT MAX(\`order\`) AS maxOrder
-    FROM Task
-    WHERE userId = ? AND DATE(date) = ?
+    SELECT MAX(sort_order) AS maxOrder
+    FROM task
+    WHERE user_id = ? AND DATE(date) = ?
     `,
     [userId, date],
   );
 
   const nextOrder = (row?.maxOrder ?? 0) + 1;
+  const taskId = uuidv4();
 
   // 2) 자동 계산된 order로 INSERT
-  const result: any = await execute(
+  await execute(
     `
-    INSERT INTO Task (userId, title, date, status, \`order\`, totalTrackedMinutes)
-    VALUES (?, ?, ?, 'YET', ?, 0)
+    INSERT INTO task (id, user_id, title, date, status, sort_order, total_tracked_minutes)
+    VALUES (?, ?, ?, ?, 'YET', ?, 0)
     `,
-    [userId, title, dateTime, nextOrder],
+    [taskId, userId, title, dateTime, nextOrder],
   );
-
-
-  const insertedId = result.insertId as number;
 
   const [created] = await query<TaskRow>(
     `
-    SELECT id, userId, title, date, status, \`order\`, totalTrackedMinutes, createdAt
-    FROM Task
+    SELECT 
+      id, 
+      user_id as userId, 
+      title, 
+      date, 
+      status, 
+      sort_order as \`order\`, 
+      total_tracked_minutes as totalTrackedMinutes, 
+      created_at as createdAt
+    FROM task
     WHERE id = ?
     `,
-    [insertedId],
+    [taskId],
   );
 
   if (!created) {

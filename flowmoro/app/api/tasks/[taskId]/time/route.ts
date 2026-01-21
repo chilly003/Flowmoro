@@ -5,9 +5,11 @@ import { ok, fail, withErrorHandling } from "@/lib/api-utils";
 import { requireUserId } from "@/lib/auth-guard";
 
 
+import { v4 as uuidv4 } from "uuid";
+
 type TaskRow = {
-  id: number;
-  userId: number;
+  id: string;
+  userId: string;
 };
 
 type RouteParams = {
@@ -19,10 +21,9 @@ const addTaskTime = async (
   { params }: RouteParams,
 ): Promise<Response> => {
   const userId = await requireUserId();
-  const { taskId } = await params; 
-  const id = Number(taskId);
-  
-  if (!taskId || Number.isNaN(id)) {
+  const { taskId } = await params;
+
+  if (!taskId) {
     return fail(
       "VALIDATION_ERROR",
       "유효한 taskId가 필요합니다.",
@@ -47,11 +48,11 @@ const addTaskTime = async (
 
   const [task] = await query<TaskRow>(
     `
-    SELECT id, userId
-    FROM Task
-    WHERE id = ? AND userId = ?
+    SELECT id, user_id as userId
+    FROM task
+    WHERE id = ? AND user_id = ?
     `,
-    [id, userId],
+    [taskId, userId],
   );
 
   if (!task) {
@@ -62,26 +63,28 @@ const addTaskTime = async (
     );
   }
 
+  const logId = uuidv4();
+
   await execute(
     `
-    INSERT INTO TaskTimeLog (taskId, durationMinutes)
-    VALUES (?, ?)
+    INSERT INTO task_time_log (id, task_id, duration_minutes)
+    VALUES (?, ?, ?)
     `,
-    [id, durationMinutes],
+    [logId, taskId, durationMinutes],
   );
 
   await execute(
     `
-    UPDATE Task
-    SET totalTrackedMinutes = totalTrackedMinutes + ?
-    WHERE id = ? AND userId = ?
+    UPDATE task
+    SET total_tracked_minutes = total_tracked_minutes + ?
+    WHERE id = ? AND user_id = ?
     `,
-    [durationMinutes, id, userId],
+    [durationMinutes, taskId, userId],
   );
 
   return ok(
     {
-      taskId: id,
+      taskId: taskId,
       addedMinutes: durationMinutes,
     },
     200,

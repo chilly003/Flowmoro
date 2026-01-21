@@ -6,7 +6,7 @@ import { requireUserId } from "@/lib/auth-guard";
 
 interface ReorderBody {
   date?: string;
-  orderedIds?: number[];
+  orderedIds?: string[]; // UUID string
 }
 
 const reorderTasks = async (req: NextRequest): Promise<Response> => {
@@ -27,9 +27,9 @@ const reorderTasks = async (req: NextRequest): Promise<Response> => {
   for (const taskId of orderedIds) {
     await execute(
       `
-      UPDATE Task
-      SET \`order\` = ?
-      WHERE id = ? AND userId = ? AND DATE(date) = ?
+      UPDATE task
+      SET sort_order = ?
+      WHERE id = ? AND user_id = ? AND DATE(date) = ?
       `,
       [order, taskId, userId, date],
     );
