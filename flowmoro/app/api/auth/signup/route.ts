@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { execute, query } from "@/lib/db";
+import { v4 as uuidv4 } from 'uuid';
 
 type Existing = { id: string }
 
@@ -24,14 +25,12 @@ export async function POST(req: Request) {
     }
 
     const passwordHash = await bcrypt.hash(password, 12)
+    const userId = uuidv4();
 
-    const result = await execute(
-        "INSERT INTO user (email, password_hash) VALUES (?, ?)",
-        [normalizedEmail, passwordHash],
+    await execute(
+        "INSERT INTO user (id, email, password_hash) VALUES (?, ?, ?)",
+        [userId, normalizedEmail, passwordHash],
     )
 
-    // insertId를 가져오기 위해 result를 타입 단언하거나 확인해야 함
-    const insertId = (result as any).insertId;
-
-    return NextResponse.json({ success: true, data: { id: insertId, email: normalizedEmail } });
+    return NextResponse.json({ success: true, data: { id: userId, email: normalizedEmail } });
 }
