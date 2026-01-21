@@ -20,7 +20,7 @@ export const { handlers, auth } = NextAuth({
         if (!email || !password) return null;
 
         const users = await query<DbUser>(
-          "SELECT id, email, passwordHash FROM USER WHERE email = ? LIMIT 1",
+          "SELECT id, email, password_hash FROM user WHERE email = ? LIMIT 1",
           [email],
         );
 
