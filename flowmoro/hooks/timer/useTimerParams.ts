@@ -3,10 +3,11 @@
 import { useMemo } from "react";
 import { useSearchParams } from "next/navigation";
 
+// src/hooks/timer/useTimerParams.ts
 export function useTimerParams() {
   const sp = useSearchParams();
 
-  const taskId = useMemo(() => Number(sp.get("taskId")), [sp]);
+  const taskId = sp.get("taskId") || ""; // string
   const date = sp.get("date");
   const minutes = useMemo(() => Number(sp.get("m")), [sp]);
 

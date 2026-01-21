@@ -6,7 +6,7 @@ import { useTasksQuery } from "@/hooks/tasks/useTasksQuery";
 
 const PRESETS = [15, 30, 60] as const;
 
-export default function TimeClient({ taskId }: { taskId: number }) {
+export default function TimeClient({ taskId }: { taskId: string }) {
   const router = useRouter();
   const sp = useSearchParams();
 
@@ -14,7 +14,7 @@ export default function TimeClient({ taskId }: { taskId: number }) {
   const { tasks, isError } = useTasksQuery(date);
 
   const task = useMemo(() => {
-    return tasks.find((t: any) => Number(t.id) === taskId);
+    return tasks.find((t: any) => t.id === taskId);
   }, [tasks, taskId]);
 
   const title = task?.title ?? `Task #${taskId}`;

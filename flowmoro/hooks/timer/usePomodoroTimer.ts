@@ -8,7 +8,7 @@ export function usePomodoroTimer({
   date,
   totalSeconds,
 }: {
-  taskId: number;
+  taskId: string;
   date: string | null;
   totalSeconds: number;
 }) {
@@ -62,7 +62,7 @@ export function usePomodoroTimer({
     if (recordedRef.current) return;
     recordedRef.current = true;
 
-    if (!Number.isFinite(taskId)) return;
+    if (!taskId) return;
     if (!Number.isFinite(totalSeconds) || totalSeconds <= 0) return;
     if (!date) return;
 

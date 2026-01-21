@@ -8,7 +8,7 @@ export default async function Page({
   params: Params | Promise<Params>;
 }) {
   const resolved = await Promise.resolve(params);
-  const taskId = Number(resolved.taskId);
+  const taskId = resolved.taskId; // string
 
   return <TimeClient taskId={taskId} />;
 }
