@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono, Jua } from "next/font/google";
 import SessionProviders from "@/components/auth/SessionProviders";
 import { QueryProvider } from "@/components/layout/QueryProvider";
+import { Analytics } from "@vercel/analytics/react";
 import "./globals.css";
 
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
@@ -52,6 +53,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <SessionProviders>
           <QueryProvider>{children}</QueryProvider>
         </SessionProviders>
+        <Analytics />
       </body>
     </html>
   );
