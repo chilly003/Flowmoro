@@ -15,15 +15,15 @@ export async function DELETE() {
       await conn.execute(
         `
         DELETE ttl
-        FROM TASKTIMELOG ttl
-        INNER JOIN TASK t ON ttl.taskId = t.id
-        WHERE t.userId = ?
+        FROM task_time_log ttl
+        INNER JOIN task t ON ttl.task_id = t.id
+        WHERE t.user_id = ?
         `,
         [userId]
       );
 
-      await conn.execute("DELETE FROM TASK WHERE userId = ?", [userId]);
-      await conn.execute("DELETE FROM USER WHERE id = ?", [userId]);
+      await conn.execute("DELETE FROM task WHERE user_id = ?", [userId]);
+      await conn.execute("DELETE FROM user WHERE id = ?", [userId]);
     });
 
     return NextResponse.json({ ok: true });
