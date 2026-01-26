@@ -7,6 +7,62 @@
 Next.js 기반 개인 루틴 관리 도구로,
 일정을 구성하고 각 태스크를 뽀모도로 방식으로 실행할 수 있습니다.
 
+
+## 🖼️ 미리보기 (Preview)
+
+### 💻 Web
+
+<table>
+  <tr>
+    <td align="center"><b>Home</b></td>
+    <td align="center"><b>Main</b></td>
+  </tr>
+  <tr>
+    <td><img src="./pic/home_web.png" alt="Home Web" width="400"/></td>
+    <td><img src="./pic/main_web.png" alt="Main Web" width="400"/></td>
+  </tr>
+  <tr>
+    <td align="center"><b>Time</b></td>
+    <td align="center"><b>Timer</b></td>
+  </tr>
+  <tr>
+    <td><img src="./pic/time_web.png" alt="Time Web" width="400"/></td>
+    <td><img src="./pic/timer_web.png" alt="Timer Web" width="400"/></td>
+  </tr>
+</table>
+
+---
+
+### 📱 Mobile
+
+<table>
+  <tr>
+    <td align="center"><b>Home</b></td>
+    <td align="center"><b>Main</b></td>
+  </tr>
+  <tr>
+    <td><img src="./pic/home_mo.png" alt="Home Mobile" width="250"/></td>
+    <td><img src="./pic/main_mo.png" alt="Main Mobile" width="250"/></td>
+  </tr>
+  <tr>
+    <td align="center"><b>Time</b></td>
+    <td align="center"><b>Timer</b></td>
+  </tr>
+  <tr>
+    <td><img src="./pic/time_mo.png" alt="Time Mobile" width="250"/></td>
+    <td><img src="./pic/timer_mo.png" alt="Timer Mobile" width="250"/></td>
+  </tr>
+</table>
+
+---
+
+### 🧭 Navigation
+
+<p align="center">
+  <img src="./pic/nav.png" alt="Navigation" width="500"/>
+</p>
+
+
 ---
 
 ## ✨ 주요 기능
@@ -47,5 +103,5 @@ Next.js 기반 개인 루틴 관리 도구로,
 | Auth      | NextAuth                |
 | DB        | MySQL (Aiven Free)      |
 | Deploy    | Vercel                  |
-
 ---
+
