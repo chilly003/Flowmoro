@@ -3,7 +3,7 @@ name : Action GO
 on:
   push : 
   branches : 
-    - feat/gitaction
+    - master
 
 jobs :
   My-Action : 
