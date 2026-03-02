@@ -1,14 +1,13 @@
-name : Action GO
+name: Action GO
 
 on:
-  push : 
-  branches : 
-    - master
+  push:
+    branches:
+      - master
 
-jobs :
-  My-Action : 
-    runs-on : ubuntu-latest
-
-    steps : 
-      - name : Hello World
-        run : echo "Hello World"
+jobs:
+  My-Action: 
+    runs-on: ubuntu-latest
+    steps: 
+      - name: Hello World
+        run: echo "Hello World"
