@@ -1,0 +1,14 @@
+name : Action GO
+
+on:
+  push : 
+  branches : 
+    - feat/gitaction
+
+jobs :
+  My-Action : 
+    runs-on : ubuntu-latest
+
+    steps : 
+      - name : Hello World
+        run : echo "Hello World"
