@@ -3,7 +3,7 @@ name : Action GO
 on:
   push : 
   branches : 
-    - main
+    - master
 
 jobs :
   My-Action : 
